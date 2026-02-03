@@ -1,0 +1,56 @@
+"use client";
+
+import TextField from "@mui/material/TextField";
+import Autocomplete from "@mui/material/Autocomplete";
+import { useEffect, useState } from "react";
+import { Station } from "@/types";
+
+type SearchBarProps = {
+  setSelectedStation: (station: Station) => void;
+};
+
+function SearchBar({ setSelectedStation }: SearchBarProps) {
+  const [stations, setStations] = useState<Station[]>([]);
+
+  useEffect(() => {
+    const getStations = async () => {
+      const url = `${process.env.NEXT_PUBLIC_BASE_URL}/api/stations`;
+
+      const res = await fetch(url, {
+        cache: "force-cache",
+      });
+
+      const stations = await res.json();
+      setStations(stations);
+    };
+
+    getStations();
+  }, []);
+
+  const handleChange = (station: Station | null) => {
+    if (station) {
+      setSelectedStation(station);
+    }
+  };
+
+  return (
+    <div className="absolute mt-12 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-1000">
+      <div className="bg-white text-black rounded-lg shadow p-2 min-w-65 z-50 flex items-center justify-center">
+        <Autocomplete
+          options={stations}
+          sx={{ width: "100%" }}
+          renderInput={(params) => (
+            <TextField {...params} label="Station" size="small" />
+          )}
+          getOptionLabel={(station) => station.name}
+          isOptionEqualToValue={(option, value) => option.id === value.id}
+          onChange={(_, value) => {
+            handleChange(value);
+          }}
+        />
+      </div>
+    </div>
+  );
+}
+
+export default SearchBar;
