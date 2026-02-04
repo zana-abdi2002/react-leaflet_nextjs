@@ -7,6 +7,10 @@ import AnimateViewOnClick from "./AnimateViewOnClick";
 import { Icon, Map } from "leaflet";
 import useStations from "../hooks/useStations";
 import location_pin from "../assets/icons/location_pin.png";
+import MarkerClusterGroup from "react-leaflet-cluster";
+import "react-leaflet-cluster/dist/assets/MarkerCluster.css";
+import "react-leaflet-cluster/dist/assets/MarkerCluster.Default.css";
+import "leaflet/dist/leaflet.css";
 
 const locationPinIcon = new Icon({
   iconUrl: location_pin.src,
@@ -23,12 +27,19 @@ type LeafLetProviderProps = {
 export default function LeafLetProvider({
   selectedStation: station,
 }: LeafLetProviderProps) {
-  const lat = station?.lat || 50;
-  const lng = station?.lng || 50;
+  const [lat, setLat] = useState(50);
+  const [lng, setLng] = useState(50);
 
-  const [map, setMap] = useState<Map | null>(null);
+  useEffect(() => {
+    if (station) {
+      setLat(station.lat);
+      setLng(station.lng);
+    }
+  }, [station]);
 
   // -----------------------------------------------------------
+  const [map, setMap] = useState<Map | null>(null);
+
   useEffect(() => {
     // alert(lat);
     map?.setView([lat, lng], zoom);
@@ -61,15 +72,17 @@ export default function LeafLetProvider({
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         <AnimateViewOnClick />
-        {stations.map((station) => (
-          <Marker
-            icon={locationPinIcon}
-            position={[station.lat, station.lng]}
-            key={station.id}
-          >
-            <Popup>{station.name}</Popup>
-          </Marker>
-        ))}
+        <MarkerClusterGroup>
+          {stations.map((station) => (
+            <Marker
+              icon={locationPinIcon}
+              position={[station.lat, station.lng]}
+              key={station.id}
+            >
+              <Popup closeOnClick={true}>{station.name} station</Popup>
+            </Marker>
+          ))}
+        </MarkerClusterGroup>
       </MapContainer>
     ),
     [stations],
