@@ -2,30 +2,15 @@
 
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
-import { useEffect, useState } from "react";
 import { Station } from "@/types";
+import useStations from "../hooks/useStations";
 
 type SearchBarProps = {
   setSelectedStation: (station: Station) => void;
 };
 
 function SearchBar({ setSelectedStation }: SearchBarProps) {
-  const [stations, setStations] = useState<Station[]>([]);
-
-  useEffect(() => {
-    const getStations = async () => {
-      const url = `${process.env.NEXT_PUBLIC_BASE_URL}/api/stations`;
-
-      const res = await fetch(url, {
-        cache: "force-cache",
-      });
-
-      const stations = await res.json();
-      setStations(stations);
-    };
-
-    getStations();
-  }, []);
+  const { stations } = useStations();
 
   const handleChange = (station: Station | null) => {
     if (station) {

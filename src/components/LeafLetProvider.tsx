@@ -4,9 +4,17 @@ import { Station } from "@/types";
 import { useEffect, useMemo, useState } from "react";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import AnimateViewOnClick from "./AnimateViewOnClick";
-import { Map } from "leaflet";
+import { Icon, Map } from "leaflet";
+import useStations from "../hooks/useStations";
+import location_pin from "../assets/icons/location_pin.png";
 
-const zoom = 13;
+const locationPinIcon = new Icon({
+  iconUrl: location_pin.src,
+  iconSize: [24, 24],
+  iconAnchor: [12, 24],
+});
+
+const zoom = 15;
 
 type LeafLetProviderProps = {
   selectedStation: Station | null;
@@ -21,7 +29,6 @@ export default function LeafLetProvider({
   const [map, setMap] = useState<Map | null>(null);
 
   // -----------------------------------------------------------
-
   useEffect(() => {
     // alert(lat);
     map?.setView([lat, lng], zoom);
@@ -38,6 +45,8 @@ export default function LeafLetProvider({
   }, [lat, lng]);
   // -----------------------------------------------------------
 
+  const { stations } = useStations();
+
   const displayMap = useMemo(
     () => (
       <MapContainer
@@ -52,17 +61,19 @@ export default function LeafLetProvider({
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         <AnimateViewOnClick />
-        <Marker position={[51.1657, 10.4515]}>
-          <Popup>
-            A pretty CSS3 popup. <br /> Easily customizable.
-          </Popup>
-        </Marker>
+        {stations.map((station) => (
+          <Marker
+            icon={locationPinIcon}
+            position={[station.lat, station.lng]}
+            key={station.id}
+          >
+            <Popup>{station.name}</Popup>
+          </Marker>
+        ))}
       </MapContainer>
     ),
-    [],
+    [stations],
   );
 
   return <div>{displayMap}</div>;
 }
-
-// TODO: https://react-leaflet.js.org/docs/example-layers-control/ ++ React control
