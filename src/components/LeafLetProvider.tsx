@@ -22,20 +22,22 @@ const zoom = 15;
 
 type LeafLetProviderProps = {
   selectedStation: Station | null;
+  filteredCities: string[];
 };
 
 export default function LeafLetProvider({
-  selectedStation: station,
+  selectedStation,
+  filteredCities,
 }: LeafLetProviderProps) {
   const [lat, setLat] = useState(50);
   const [lng, setLng] = useState(50);
 
   useEffect(() => {
-    if (station) {
-      setLat(station.lat);
-      setLng(station.lng);
+    if (selectedStation) {
+      setLat(selectedStation.lat);
+      setLng(selectedStation.lng);
     }
-  }, [station]);
+  }, [selectedStation]);
 
   // -----------------------------------------------------------
   const [map, setMap] = useState<Map | null>(null);
@@ -56,7 +58,7 @@ export default function LeafLetProvider({
   }, [lat, lng]);
   // -----------------------------------------------------------
 
-  const { stations } = useStations();
+  const { stations } = useStations(filteredCities);
 
   const displayMap = useMemo(
     () => (

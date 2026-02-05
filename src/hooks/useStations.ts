@@ -1,7 +1,11 @@
 import { Station } from "@/types";
 import { useEffect, useState } from "react";
 
-export default function useStations() {
+const EMPTY_ARRAY: ReadonlyArray<string> = [];
+
+export default function useStations(
+  filteredCities: ReadonlyArray<string> = EMPTY_ARRAY,
+) {
   const [stations, setStations] = useState<Station[]>([]);
 
   useEffect(() => {
@@ -13,11 +17,20 @@ export default function useStations() {
       });
 
       const stations = await res.json();
-      setStations(stations);
+
+      if (filteredCities.length > 0) {
+        setStations(
+          stations.filter((station: Station) =>
+            filteredCities.includes(station.city),
+          ),
+        );
+      } else {
+        setStations(stations);
+      }
     };
 
     getStations();
-  }, []);
+  }, [filteredCities]);
 
   return {
     stations,
