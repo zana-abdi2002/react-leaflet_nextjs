@@ -1,17 +1,29 @@
 import useStations from "@/hooks/useStations";
+import { Station } from "@/types";
 import { Autocomplete, TextField } from "@mui/material";
 
 type SelectCityFilterProps = {
   filteredCities: string[];
   setFilteredCities: (filteredCities: string[]) => void;
+  selectedStation: Station | null;
+  setSelectedStation: (station: Station | null) => void;
 };
 
 function SelectCityFilter({
   filteredCities,
   setFilteredCities,
+  selectedStation,
+  setSelectedStation,
 }: SelectCityFilterProps) {
   const { stations } = useStations();
   const cityNames = [...new Set(stations.map((s) => s.city))];
+
+  const handleChange = (value: string[]) => {
+    setFilteredCities(value);
+    if (!value.includes(selectedStation?.city || "")) {
+      setSelectedStation(null);
+    }
+  };
 
   return (
     <div className="fixed left-1/2 transform -translate-x-1/2 z-999 bg-white/80 text-black rounded-2xl shadow-lg px-4 py-2 w-100 pointer-events-auto mt-4">
@@ -24,7 +36,7 @@ function SelectCityFilter({
         defaultValue={[]}
         value={filteredCities}
         onChange={(_, value) => {
-          setFilteredCities(value);
+          handleChange(value);
         }}
         renderInput={(params) => (
           <TextField

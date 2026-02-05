@@ -6,11 +6,16 @@ import { Station } from "@/types";
 import useStations from "../hooks/useStations";
 
 type SearchBarProps = {
+  selectedStation: Station | null;
   setSelectedStation: (station: Station) => void;
   filteredCities: string[];
 };
 
-function SearchBar({ setSelectedStation, filteredCities }: SearchBarProps) {
+function SearchBar({
+  selectedStation,
+  setSelectedStation,
+  filteredCities,
+}: SearchBarProps) {
   const { stations } = useStations(filteredCities);
 
   const handleChange = (station: Station | null) => {
@@ -30,6 +35,7 @@ function SearchBar({ setSelectedStation, filteredCities }: SearchBarProps) {
           )}
           getOptionLabel={(station) => station.name}
           isOptionEqualToValue={(option, value) => option.id === value.id}
+          value={selectedStation}
           onChange={(_, value) => {
             handleChange(value);
           }}

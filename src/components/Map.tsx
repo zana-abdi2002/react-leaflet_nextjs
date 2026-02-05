@@ -22,13 +22,17 @@ export default function Map() {
 
   return (
     <div>
+      {/* TODO: comment use of each prop */}
       <SearchBar
+        selectedStation={selectedStation}
         setSelectedStation={setSelectedStation}
         filteredCities={filteredCities}
       />
       <SelectCityFilter
         filteredCities={filteredCities}
         setFilteredCities={setFilteredCities}
+        selectedStation={selectedStation}
+        setSelectedStation={setSelectedStation}
       />
       <LeafLetProvider
         selectedStation={selectedStation}
