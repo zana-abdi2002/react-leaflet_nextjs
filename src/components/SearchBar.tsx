@@ -7,10 +7,11 @@ import useStations from "../hooks/useStations";
 
 type SearchBarProps = {
   setSelectedStation: (station: Station) => void;
+  filteredCities: string[];
 };
 
-function SearchBar({ setSelectedStation }: SearchBarProps) {
-  const { stations } = useStations();
+function SearchBar({ setSelectedStation, filteredCities }: SearchBarProps) {
+  const { stations } = useStations(filteredCities);
 
   const handleChange = (station: Station | null) => {
     if (station) {
