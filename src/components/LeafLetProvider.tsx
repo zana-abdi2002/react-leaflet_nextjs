@@ -31,6 +31,7 @@ export default function LeafLetProvider({
 }: LeafLetProviderProps) {
   const [lat, setLat] = useState(50);
   const [lng, setLng] = useState(50);
+  const [map, setMap] = useState<Map | null>(null);
 
   useEffect(() => {
     if (selectedStation) {
@@ -39,32 +40,29 @@ export default function LeafLetProvider({
     }
   }, [selectedStation]);
 
-  // -----------------------------------------------------------
-  const [map, setMap] = useState<Map | null>(null);
-
+  // change center on searching station -------------------------
   useEffect(() => {
-    // alert(lat);
     map?.setView([lat, lng], zoom);
 
-    const handleMove = () => {
-      // You can add logic here if you want to do something on move
-    };
-
-    map?.on("move", handleMove);
-    return () => {
-      map?.off("move", handleMove);
-    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lat, lng]);
   // -----------------------------------------------------------
+
+  // change center on filtering city .............................
+  useEffect(() => {
+    map?.setView([51.1657, 10.4515], 5); // Germany bird view
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filteredCities]);
+  // ..............................................................
 
   const { stations } = useStations(filteredCities);
 
   const displayMap = useMemo(
     () => (
       <MapContainer
-        center={[51.1657, 10.4515]}
-        zoom={5}
+        center={[51.1657, 10.4515]} // initial load
+        zoom={5} // initial load
         scrollWheelZoom={true}
         style={{ height: "100dvh", width: "100%" }}
         ref={setMap}
@@ -80,6 +78,15 @@ export default function LeafLetProvider({
               icon={locationPinIcon}
               position={[station.lat, station.lng]}
               key={station.id}
+              alt={`location pin icon of ${station.name} station`}
+              eventHandlers={{
+                click: () => {
+                  // center instantly:
+                  map?.setView([station.lat, station.lng], zoom);
+                  // or for smooth animation use:
+                  // map?.flyTo([station.lat, station.lng], zoom);
+                },
+              }}
             >
               <Popup closeOnClick={true}>{station.name} station</Popup>
             </Marker>
