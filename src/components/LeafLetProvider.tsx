@@ -40,7 +40,7 @@ export default function LeafLetProvider({
     }
   }, [selectedStation]);
 
-  // change center on searching station -------------------------
+  // change center on searching a specific station ----------------
   useEffect(() => {
     map?.setView([lat, lng], zoom);
 
@@ -48,7 +48,7 @@ export default function LeafLetProvider({
   }, [lat, lng]);
   // -----------------------------------------------------------
 
-  // change center on filtering city .............................
+  // zoom out on filtering city ...................................
   useEffect(() => {
     map?.setView([51.1657, 10.4515], 5); // Germany bird view
 
@@ -71,8 +71,11 @@ export default function LeafLetProvider({
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
+
         <AnimateViewOnClick />
+
         <MarkerClusterGroup>
+          {/* mark stations --------------------------------------------------- */}
           {stations.map((station) => (
             <Marker
               icon={locationPinIcon}
@@ -91,9 +94,12 @@ export default function LeafLetProvider({
               <Popup closeOnClick={true}>{station.name} station</Popup>
             </Marker>
           ))}
+          {/* ------------------------------------------------------------------- */}
         </MarkerClusterGroup>
       </MapContainer>
     ),
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [stations],
   );
 

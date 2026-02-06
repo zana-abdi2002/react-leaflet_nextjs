@@ -22,7 +22,6 @@ export default function Map() {
 
   return (
     <div>
-      {/* TODO: comment use of each prop */}
       <SearchBar
         selectedStation={selectedStation}
         setSelectedStation={setSelectedStation}
@@ -31,11 +30,12 @@ export default function Map() {
       <SelectCityFilter
         filteredCities={filteredCities}
         setFilteredCities={setFilteredCities}
+        // To remove selected station if it's not in the filter
         selectedStation={selectedStation}
         setSelectedStation={setSelectedStation}
       />
       <LeafLetProvider
-        selectedStation={selectedStation}
+        selectedStation={selectedStation} // to zoom on selected station
         filteredCities={filteredCities}
       />
     </div>

@@ -3,6 +3,12 @@ import { useEffect, useState } from "react";
 
 const EMPTY_ARRAY: ReadonlyArray<string> = [];
 
+/**
+ * Fetches stations from the API and filters them based on the provided cities.
+ *
+ * @param {ReadonlyArray<string>} filteredCities The cities to filter the stations by.
+ * @returns {Object} An object containing the filtered stations.
+ */
 export default function useStations(
   filteredCities: ReadonlyArray<string> = EMPTY_ARRAY,
 ) {

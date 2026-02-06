@@ -20,6 +20,9 @@ function SelectCityFilter({
 
   const handleChange = (value: string[]) => {
     setFilteredCities(value);
+
+    // Remove selected station if it's not in the filter
+    // and then the state value causes search bar component to be cleared
     if (!value.includes(selectedStation?.city || "")) {
       setSelectedStation(null);
     }
