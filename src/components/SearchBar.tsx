@@ -7,7 +7,7 @@ import useStations from "../hooks/useStations";
 
 type SearchBarProps = {
   selectedStation: Station | null;
-  setSelectedStation: (station: Station) => void;
+  setSelectedStation: (station: Station | null) => void;
   filteredCities: string[];
 };
 
@@ -19,9 +19,7 @@ function SearchBar({
   const { stations } = useStations(filteredCities);
 
   const handleChange = (station: Station | null) => {
-    if (station) {
-      setSelectedStation(station);
-    }
+    setSelectedStation(station);
   };
 
   return (
