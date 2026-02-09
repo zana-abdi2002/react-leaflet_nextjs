@@ -66,8 +66,8 @@
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/germany-train-stations-map.git
-cd germany-train-stations-map
+git clone https://github.com/zana-abdi2002/react-leaflet_nextjs.git
+cd react-leaflet_nextjs
 
 # Install dependencies
 pnpm install
