@@ -56,7 +56,9 @@ export default function LeafLetProvider({
   }, [filteredCities]);
   // ..............................................................
 
-  const { stations } = useStations(filteredCities);
+  const { stations, error } = useStations(filteredCities);
+
+  if (error) throw error;
 
   const displayMap = useMemo(
     () => (

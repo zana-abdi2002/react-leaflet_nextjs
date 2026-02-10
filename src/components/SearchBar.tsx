@@ -16,7 +16,9 @@ function SearchBar({
   setSelectedStation,
   filteredCities,
 }: SearchBarProps) {
-  const { stations } = useStations(filteredCities);
+  const { stations, error } = useStations(filteredCities);
+
+  if (error) throw error;
 
   const handleChange = (station: Station | null) => {
     setSelectedStation(station);

@@ -3,6 +3,11 @@ import { useEffect, useState } from "react";
 
 const EMPTY_ARRAY: ReadonlyArray<string> = [];
 
+type UseStations = {
+  stations: Station[];
+  error: Error | null;
+};
+
 /**
  * Fetches stations from the API and filters them based on the provided cities.
  *
@@ -11,8 +16,9 @@ const EMPTY_ARRAY: ReadonlyArray<string> = [];
  */
 export default function useStations(
   filteredCities: ReadonlyArray<string> = EMPTY_ARRAY,
-) {
+): UseStations {
   const [stations, setStations] = useState<Station[]>([]);
+  const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     const getStations = async () => {
@@ -21,6 +27,12 @@ export default function useStations(
       const res = await fetch(url, {
         cache: "force-cache",
       });
+
+      if (!res.ok) {
+        setError(new Error(res.statusText));
+      } else {
+        setError(null);
+      }
 
       const stations = await res.json();
 
@@ -40,7 +52,7 @@ export default function useStations(
 
   return {
     stations,
-    // TODO: loading
-    // TODO: error
+    // loading is not set because this fetch takes no measurable time
+    error,
   };
 }

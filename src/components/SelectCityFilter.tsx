@@ -18,8 +18,10 @@ function SelectCityFilter({
   setSelectedStation,
 }: SelectCityFilterProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const { stations } = useStations();
+  const { stations, error } = useStations();
   const cityNames = [...new Set(stations.map((s) => s.city))];
+
+  if (error) throw error;
 
   const handleChange = (value: string[]) => {
     setFilteredCities(value);
