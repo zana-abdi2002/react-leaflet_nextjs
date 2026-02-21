@@ -1,58 +1,35 @@
 import { Station } from "@/types";
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 
 const EMPTY_ARRAY: ReadonlyArray<string> = [];
 
-type UseStations = {
-  stations: Station[];
-  error: Error | null;
+const fetchStations = async (): Promise<Station[]> => {
+  const url = `${process.env.NEXT_PUBLIC_BASE_URL}/api/stations`;
+  const res = await fetch(url);
+
+  if (!res.ok) {
+    throw new Error(`Failed to fetch stations: ${res.status}`);
+  }
+
+  const data = await res.json();
+  return data;
 };
 
-/**
- * Fetches stations from the API and filters them based on the provided cities.
- *
- * @param {ReadonlyArray<string>} filteredCities The cities to filter the stations by.
- * @returns {Object} An object containing the filtered stations.
- */
 export default function useStations(
   filteredCities: ReadonlyArray<string> = EMPTY_ARRAY,
-): UseStations {
-  const [stations, setStations] = useState<Station[]>([]);
-  const [error, setError] = useState<Error | null>(null);
+) {
+  const { data, error } = useQuery({
+    queryKey: ["stations"],
+    queryFn: fetchStations,
+    staleTime: 60_000,
+    retry: 2,
+    retryDelay: 1000,
+  });
 
-  useEffect(() => {
-    const getStations = async () => {
-      const url = `${process.env.NEXT_PUBLIC_BASE_URL}/api/stations`;
+  const stations =
+    filteredCities.length > 0
+      ? data?.filter((s: Station) => filteredCities.includes(s.city))
+      : data;
 
-      const res = await fetch(url, {
-        cache: "force-cache",
-      });
-
-      if (!res.ok) {
-        setError(new Error(res.statusText));
-      } else {
-        setError(null);
-      }
-
-      const stations = await res.json();
-
-      if (filteredCities.length > 0) {
-        setStations(
-          stations.filter((station: Station) =>
-            filteredCities.includes(station.city),
-          ),
-        );
-      } else {
-        setStations(stations);
-      }
-    };
-
-    getStations();
-  }, [filteredCities]);
-
-  return {
-    stations,
-    // loading is not set because this fetch takes no measurable time
-    error,
-  };
+  return { stations, error };
 }

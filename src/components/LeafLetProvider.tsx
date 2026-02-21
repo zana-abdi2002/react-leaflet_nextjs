@@ -78,7 +78,7 @@ export default function LeafLetProvider({
 
         <MarkerClusterGroup>
           {/* mark stations --------------------------------------------------- */}
-          {stations.map((station) => (
+          {stations?.map((station) => (
             <Marker
               icon={locationPinIcon}
               position={[station.lat, station.lng]}

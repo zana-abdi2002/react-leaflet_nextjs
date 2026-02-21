@@ -16,7 +16,7 @@ function SearchBar({
   setSelectedStation,
   filteredCities,
 }: SearchBarProps) {
-  const { stations, error } = useStations(filteredCities);
+  const { stations = [], error } = useStations(filteredCities);
 
   if (error) throw error;
 
