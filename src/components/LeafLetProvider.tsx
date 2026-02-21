@@ -8,6 +8,7 @@ import { Icon, Map } from "leaflet";
 import useStations from "../hooks/useStations";
 import location_pin from "../assets/icons/location_pin.png";
 import MarkerClusterGroup from "react-leaflet-cluster";
+import { CircularProgress } from "@mui/material";
 import "react-leaflet-cluster/dist/assets/MarkerCluster.css";
 import "react-leaflet-cluster/dist/assets/MarkerCluster.Default.css";
 import "leaflet/dist/leaflet.css";
@@ -56,7 +57,7 @@ export default function LeafLetProvider({
   }, [filteredCities]);
   // ..............................................................
 
-  const { stations, error } = useStations(filteredCities);
+  const { stations, error, isFetching } = useStations(filteredCities);
 
   if (error) throw error;
 
@@ -105,5 +106,22 @@ export default function LeafLetProvider({
     [stations],
   );
 
-  return <div>{displayMap}</div>;
+  return (
+    <div style={{ position: "relative" }}>
+      {isFetching && (
+        <div
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            zIndex: 1000,
+          }}
+        >
+          <CircularProgress size={40} />
+        </div>
+      )}
+      {displayMap}
+    </div>
+  );
 }

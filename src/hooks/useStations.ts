@@ -18,10 +18,9 @@ const fetchStations = async (): Promise<Station[]> => {
 export default function useStations(
   filteredCities: ReadonlyArray<string> = EMPTY_ARRAY,
 ) {
-  const { data, error } = useQuery({
+  const { data, error, isFetching } = useQuery({
     queryKey: ["stations"],
     queryFn: fetchStations,
-    staleTime: 60_000,
     retry: 2,
     retryDelay: 1000,
   });
@@ -31,5 +30,5 @@ export default function useStations(
       ? data?.filter((s: Station) => filteredCities.includes(s.city))
       : data;
 
-  return { stations, error };
+  return { stations, isFetching, error };
 }
