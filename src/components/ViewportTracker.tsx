@@ -1,14 +1,27 @@
-import { useEffect } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { LatLngBounds } from "leaflet";
+import { useEffect, useRef } from "react";
 import { useMap, useMapEvents } from "react-leaflet";
 import { useDebouncedCallback } from "use-debounce";
 
-export default function ViewportTracker() {
+const PAD = 0.9;
+
+type Props = {
+  setNewBounds: (bound: LatLngBounds) => void;
+};
+
+export default function ViewportTracker({ setNewBounds }: Props) {
+  const cachedBoundsList = useRef<LatLngBounds[]>([]);
+
   const map = useMap();
 
   const handleBoundsChange = useDebouncedCallback(() => {
-    const newBounds = map.getBounds().pad(0.6);
+    const uncheckedBounds = map.getBounds().pad(PAD);
 
-    // setBound(newBounds);
+    if (!isCached(uncheckedBounds, cachedBoundsList.current || [])) {
+      cachedBoundsList.current?.push(uncheckedBounds);
+      setNewBounds(uncheckedBounds);
+    }
   }, 400);
 
   // Cleanup pending timeouts on unmount ---------
@@ -18,9 +31,10 @@ export default function ViewportTracker() {
     };
   }, [handleBoundsChange]);
 
-  // Initial render ---------------
+  // Initial render -------------------------------
   useEffect(() => {
-    // setBound(map.getBounds());
+    cachedBoundsList.current?.push(map.getBounds().pad(PAD));
+    setNewBounds(map.getBounds().pad(PAD));
   }, []);
 
   useMapEvents({
@@ -29,4 +43,26 @@ export default function ViewportTracker() {
   });
 
   return null;
+}
+
+function isCached(
+  uncheckedBounds: LatLngBounds,
+  cachedBoundsList: LatLngBounds[],
+) {
+  for (const cachedBounds of cachedBoundsList) {
+    if (isWithin(uncheckedBounds, cachedBounds)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+function isWithin(b1: LatLngBounds, b2: LatLngBounds) {
+  return (
+    b1.getNorth() < b2.getNorth() &&
+    b1.getSouth() > b2.getSouth() &&
+    b1.getEast() < b2.getEast() &&
+    b1.getWest() > b2.getWest()
+  );
 }

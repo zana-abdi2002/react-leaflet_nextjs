@@ -4,7 +4,7 @@ import { Station } from "@/types";
 import { useEffect, useMemo, useState } from "react";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import AnimateViewOnClick from "./AnimateViewOnClick";
-import { Icon, Map } from "leaflet";
+import { Icon, LatLngBounds, Map } from "leaflet";
 import useStations from "../hooks/useStations";
 import location_pin from "../assets/icons/location_pin.png";
 import MarkerClusterGroup from "react-leaflet-cluster";
@@ -22,43 +22,13 @@ const locationPinIcon = new Icon({
 
 const zoom = 15;
 
-type LeafLetProviderProps = {
-  selectedStation: Station | null;
-  filteredCities: string[];
-};
-
-export default function LeafLetProvider({
-  selectedStation,
-  filteredCities,
-}: LeafLetProviderProps) {
-  const [lat, setLat] = useState(50);
-  const [lng, setLng] = useState(50);
+export default function LeafLetProvider() {
   const [map, setMap] = useState<Map | null>(null);
+  const [newBounds, setNewBounds] = useState<LatLngBounds | null>(null);
 
-  useEffect(() => {
-    if (selectedStation) {
-      setLat(selectedStation.lat);
-      setLng(selectedStation.lng);
-    }
-  }, [selectedStation]);
-
-  // change center on searching a specific station ----------------
-  useEffect(() => {
-    map?.setView([lat, lng], zoom);
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [lat, lng]);
-  // -----------------------------------------------------------
-
-  // zoom out on filtering city ...................................
-  useEffect(() => {
-    map?.setView([51.1657, 10.4515], 5); // Germany bird view
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filteredCities]);
   // ..............................................................
 
-  const { stations, error, isFetching } = useStations(filteredCities);
+  const { stations, error, isFetching } = useStations(newBounds);
 
   if (error) throw error;
 
@@ -76,7 +46,7 @@ export default function LeafLetProvider({
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
-        {/* <ViewportTracker /> */}
+        <ViewportTracker setNewBounds={setNewBounds} />
 
         <AnimateViewOnClick />
 
