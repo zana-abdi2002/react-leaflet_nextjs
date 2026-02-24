@@ -12,6 +12,7 @@ import { CircularProgress } from "@mui/material";
 import "react-leaflet-cluster/dist/assets/MarkerCluster.css";
 import "react-leaflet-cluster/dist/assets/MarkerCluster.Default.css";
 import "leaflet/dist/leaflet.css";
+import ViewportTracker from "./ViewportTracker";
 
 const locationPinIcon = new Icon({
   iconUrl: location_pin.src,
@@ -74,6 +75,8 @@ export default function LeafLetProvider({
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
+
+        {/* <ViewportTracker /> */}
 
         <AnimateViewOnClick />
 
