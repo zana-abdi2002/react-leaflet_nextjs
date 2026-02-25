@@ -1,19 +1,41 @@
 import { Alert } from "@mui/material";
+import { useEffect, useState } from "react";
 
-import { useMap } from "react-leaflet";
+import { useMap, useMapEvents } from "react-leaflet";
+import { useDebouncedCallback } from "use-debounce";
 
 function AlertZoom() {
-  const showAlert = useMap().getZoom() < 12;
+  const [showAlert, setShowAlert] = useState<boolean>(false);
+
+  const map = useMap();
+
+  const handleMapEventChange = useDebouncedCallback(
+    () => {
+      setShowAlert(map.getZoom() < 12);
+    },
+    1000,
+    { leading: true },
+  );
+
+  // Cleanup pending timeouts on unmount
+  useEffect(() => {
+    return () => {
+      handleMapEventChange.cancel();
+    };
+  }, [handleMapEventChange]);
+
+  useMapEvents({
+    moveend: handleMapEventChange,
+    zoomend: handleMapEventChange,
+  });
 
   if (!showAlert) return null;
-
-  console.log("zoom");
 
   return (
     <div
       style={{
         position: "absolute",
-        top: "7%",
+        top: "15%",
         left: "50%",
         transform: "translate(-50%, -50%)",
         zIndex: 1000,
@@ -28,7 +50,7 @@ function AlertZoom() {
           whiteSpace: "nowrap",
         }}
       >
-        Zoom in to see stations
+        Zoom in to fetch stations
       </Alert>
     </div>
   );

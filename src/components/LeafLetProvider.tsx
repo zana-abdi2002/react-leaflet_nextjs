@@ -96,6 +96,7 @@ export default function LeafLetProvider() {
           <CircularProgress size={40} />
         </div>
       )}
+
       {displayMap}
     </div>
   );

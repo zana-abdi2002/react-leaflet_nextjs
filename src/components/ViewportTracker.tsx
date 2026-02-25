@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { useMap, useMapEvents } from "react-leaflet";
 import { useDebouncedCallback } from "use-debounce";
 
-const PAD = 2.6;
+const PAD = 1.6;
 
 type Props = {
   setNewBounds: (bound: LatLngBounds) => void;
