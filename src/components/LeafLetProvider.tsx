@@ -35,7 +35,7 @@ export default function LeafLetProvider() {
     () => (
       <MapContainer
         center={[51.1657, 10.4515]} // initial load
-        zoom={13} // initial load
+        zoom={12} // initial load
         scrollWheelZoom={true}
         style={{ height: "100dvh", width: "100%" }}
         ref={setMap}
