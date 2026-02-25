@@ -1,6 +1,5 @@
 import { Station } from "@/types";
 import { NextRequest, NextResponse } from "next/server";
-import { cache } from "react";
 
 // This Route was created to demonstrate standard practices
 
