@@ -1,15 +1,28 @@
-import { NextResponse } from "next/server";
+import { Station } from "@/types";
+import { NextRequest, NextResponse } from "next/server";
+import { cache } from "react";
 
 // This Route was created to demonstrate standard practices
 
-export const dynamic = "force-static";
+type Response = {
+  elements: Station[];
+};
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url);
+
+  const stringBBox = searchParams.get("stringBBox");
+
   const res = await fetch(
-    `https://gist.githubusercontent.com/neysidev/bbd40032f0f4e167a1e6a8b3e99a490c/raw/fc7dc242f41393845d90edaa99e32e28f1ddfe24/train-stations.json`,
+    `https://overpass-api.de/api/interpreter?data=[out:json];node[%22railway%22=%22station%22](${stringBBox});out%20body;`,
+    {
+      next: { revalidate: 60 * 60 * 24 * 1 },
+    },
   );
 
-  const data = await res.json();
+  const data: Promise<Response> = await res.json();
 
-  return NextResponse.json(data);
+  return NextResponse.json((await data).elements);
 }
+
+// https://overpass-api.de/api/interpreter?data=[out:json];node[%22railway%22=%22station%22](51.12076245895415,10.214796066284181,51.210580448273774,10.6882381439209);out%20body;

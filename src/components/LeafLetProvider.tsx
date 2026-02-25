@@ -1,7 +1,6 @@
 "use client";
 
-import { Station } from "@/types";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import AnimateViewOnClick from "./AnimateViewOnClick";
 import { Icon, LatLngBounds, Map } from "leaflet";
@@ -36,7 +35,7 @@ export default function LeafLetProvider() {
     () => (
       <MapContainer
         center={[51.1657, 10.4515]} // initial load
-        zoom={5} // initial load
+        zoom={13} // initial load
         scrollWheelZoom={true}
         style={{ height: "100dvh", width: "100%" }}
         ref={setMap}
@@ -55,19 +54,19 @@ export default function LeafLetProvider() {
           {stations?.map((station) => (
             <Marker
               icon={locationPinIcon}
-              position={[station.lat, station.lng]}
+              position={[station.lat, station.lon]}
               key={station.id}
-              alt={`location pin icon of ${station.name} station`}
+              alt={`location pin icon of ${station.tags.name} station`}
               eventHandlers={{
                 click: () => {
                   // center instantly:
-                  map?.setView([station.lat, station.lng], zoom);
+                  map?.setView([station.lat, station.lon], zoom);
                   // or for smooth animation use:
-                  // map?.flyTo([station.lat, station.lng], zoom);
+                  // map?.flyTo([station.lat, station.lon], zoom);
                 },
               }}
             >
-              <Popup closeOnClick={true}>{station.name} station</Popup>
+              <Popup closeOnClick={true}>{station.tags.name} station</Popup>
             </Marker>
           ))}
           {/* ------------------------------------------------------------------- */}

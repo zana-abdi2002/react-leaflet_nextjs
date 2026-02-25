@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { useMap, useMapEvents } from "react-leaflet";
 import { useDebouncedCallback } from "use-debounce";
 
-const PAD = 0.9;
+const PAD = 2;
 
 type Props = {
   setNewBounds: (bound: LatLngBounds) => void;
@@ -16,11 +16,15 @@ export default function ViewportTracker({ setNewBounds }: Props) {
   const map = useMap();
 
   const handleBoundsChange = useDebouncedCallback(() => {
-    const uncheckedBounds = map.getBounds().pad(PAD);
+    const uncheckedBounds = map.getBounds();
 
     if (!isCached(uncheckedBounds, cachedBoundsList.current || [])) {
-      cachedBoundsList.current?.push(uncheckedBounds);
-      setNewBounds(uncheckedBounds);
+      cachedBoundsList.current?.push(uncheckedBounds.pad(PAD));
+      setNewBounds(uncheckedBounds.pad(PAD));
+      console.log("NOT cached");
+      console.log(uncheckedBounds);
+    } else {
+      console.log("cached");
     }
   }, 400);
 
