@@ -7,13 +7,15 @@ type Response = {
   elements: Station[];
 };
 
+const LIMIT = 30;
+
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
 
   const stringBBox = searchParams.get("stringBBox");
 
   const res = await fetch(
-    `https://overpass-api.de/api/interpreter?data=[out:json];node[%22railway%22=%22station%22](${stringBBox});out%20body;`,
+    `https://overpass-api.de/api/interpreter?data=[out:json];node["railway"="station"](${stringBBox});out body ${LIMIT};`,
     {
       next: { revalidate: 60 * 60 * 24 * 1 },
     },
