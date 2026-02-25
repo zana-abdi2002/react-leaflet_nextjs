@@ -30,8 +30,6 @@ export default function useStations(newBounds: LatLngBounds | null = null) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
-  console.log(stations.length);
-
   return { stations, isFetching, error };
 }
 

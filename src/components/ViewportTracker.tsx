@@ -23,10 +23,6 @@ export default function ViewportTracker({ setNewBounds }: Props) {
     if (!isCached(uncheckedBounds, cachedBoundsList.current || [])) {
       cachedBoundsList.current?.push(uncheckedBounds.pad(PAD));
       setNewBounds(uncheckedBounds.pad(PAD));
-      console.log("NOT cached");
-      console.log(uncheckedBounds);
-    } else {
-      console.log("cached");
     }
   }, 400);
 
